@@ -74,10 +74,6 @@ export class ModuleService {
 			}),
 		]);
 
-		if (modules.length === 0) {
-			throw new NotFoundException(`No modules found for user ${user_id} in course ${course_id}`);
-		}
-
 		return {
 			modules: modules.map(module => ({
 				id: module.id,
