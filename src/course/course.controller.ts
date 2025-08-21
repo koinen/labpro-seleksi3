@@ -183,7 +183,7 @@ export class CourseController {
 		@User() req: JwtPayload
 	) {
 		const { page, limit } = query;
-		const modules = await this.moduleService.modules({
+		const { modules, total } = await this.moduleService.modules({
 			user_id: req.sub,
 			course_id,
 			page,
@@ -193,8 +193,8 @@ export class CourseController {
 			.setData(modules)
 			.setPagination({
 				current_page: page,
-				total_pages: Math.ceil(modules.total / limit),
-				total_items: modules.total,
+				total_pages: Math.ceil(total / limit),
+				total_items: total,
 			})
 			.build();
 	}

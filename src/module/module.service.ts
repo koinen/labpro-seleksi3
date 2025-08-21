@@ -58,10 +58,22 @@ export class ModuleService {
 		course_id: string;
 		page: number;
 		limit: number;
-	}): Promise<GetModulesResponse> {
+	}, is_admin: boolean = true): Promise<GetModulesResponse> {
 		const { user_id, course_id, page, limit } = param;
-		const [ modules, total ] = await this.prisma.$transaction([
-			this.prisma.module.findMany({
+		const total = await this.prisma.module.count({
+			where: { course_id: course_id },	
+		});
+
+		let modules;
+		
+		if (is_admin) {
+			modules = await this.prisma.module.findMany({
+				where: { course_id: course_id },
+				skip: (page - 1) * limit,
+				take: limit,
+			});
+		} else {
+			modules = await this.prisma.module.findMany({
 				where: { course_id: course_id, progress: { some: { user_id } } },
 				skip: (page - 1) * limit,
 				take: limit,
@@ -72,12 +84,8 @@ export class ModuleService {
 						}
 					}
 				}
-			}),
-			this.prisma.module.count({
-				where: { course_id: course_id },
-			}),
-		]);
-
+			});
+		}
 		return {
 			modules: modules.map(module => ({
 				id: module.id,
@@ -86,7 +94,7 @@ export class ModuleService {
 				order: module.order,
 				pdf_content: module.pdf_content,
 				video_content: module.video_content,
-				is_completed: module.progress[0]?.is_completed,
+				is_completed: module.progress[0]?.is_completed || false,
 				created_at: module.created_at.toString(),
 				updated_at: module.updated_at.toString(),
 			})),
