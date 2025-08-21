@@ -29,7 +29,7 @@ export class CourseController {
 	) {}
 
 	@Post()
-	@UseInterceptors(FileInterceptor('file'))
+	@UseInterceptors(FileInterceptor('thumbnail_image'))
 	@ApiOperation({ summary: 'Create a new course' })
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course created successfully' })
 	async create(
