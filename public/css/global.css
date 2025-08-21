@@ -1,0 +1,70 @@
+/* Reset & base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff;
+  min-height: 100vh;
+  color: #000;
+}
+
+/* Common container (optional global utility) */
+.container {
+  width: 100%;
+  max-width: 960px; /* more flexible for all pages */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Typography */
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Form elements (generic) */
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+/* Buttons (generic) */
+button {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+button:hover {
+  background: #333;
+}
+
+/* Links (generic) */
+a {
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+a:hover {
+  color: #000;
+}

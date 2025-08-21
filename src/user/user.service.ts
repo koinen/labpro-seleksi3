@@ -1,26 +1,163 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { HashService } from '../common/hash.service';
+import { UpdateUserRequestDto } from './dto/request/update-user-request.dto';
+import { IncrementBalanceRequestDto } from './dto/request/increment-balance-request.dto';
+import { GetSingleUserResponse } from './dto/response/get-single-user-response.dto';
+import { GetUsersResponse } from './dto/response/get-users-response.dto';
+import { IncrementBalanceResponseDto } from './dto/response/increment-balance-response.dto';
+import { UpdateUserResponseDto } from './dto/response/update-user-response.dto';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+	constructor(
+		private prisma: PrismaService, 
+		private readonly hashService: HashService
+	) {}
 
-  findAll() {
-    return `This action returns all user`;
-  }
+	async user(
+    	id: string,
+  	): Promise<GetSingleUserResponse> {
+		const user = await this.prisma.user.findUnique({
+			where: { id },
+			include: {
+				_count: {
+					select: { enrollment : true },
+				},
+			},
+		});
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    	if (!user) throw new NotFoundException('User not found');
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+		return {
+			id: user.id,
+			username: user.username,
+			email: user.email,
+			first_name: user.first_name,
+			last_name: user.last_name,
+			balance: user.balance,
+			courses_purchased: user._count.enrollment,
+		};
+  	}
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  	async users(params: {
+    	search: string;
+		page: number;
+		limit: number;
+  	}): Promise<GetUsersResponse> {
+		const { search, page, limit } = params;
+		const [users, total] = await this.prisma.$transaction([
+			this.prisma.user.findMany({
+				where: {
+					OR: [
+						{ username: { contains: search } },
+						{ email: { contains: search } },
+						{ first_name: { contains: search } },
+						{ last_name: { contains: search } },
+					],
+				},
+				select: {
+					id: true,
+					username: true,
+					email: true,
+					first_name: true,
+					last_name: true,
+					balance: true,
+				},
+				skip: (page - 1) * limit,
+				take: limit,
+			}),
+			this.prisma.user.count({
+				where: {
+					OR: [
+						{ username: { contains: search } },
+						{ email: { contains: search } },
+						{ first_name: { contains: search } },
+						{ last_name: { contains: search } },
+					],
+				},
+			}),
+		]);
+		return {
+			users,
+			total,
+		}
+  	}
+
+	async incrementBalance(params: { 
+		id: string; 
+		dto: IncrementBalanceRequestDto; 
+	}): Promise<IncrementBalanceResponseDto> {
+		const { id, dto } = params;
+
+		const user = await this.prisma.user.findUnique({
+		where: { id },
+		});
+
+		if (!user) throw new NotFoundException('User not found');
+
+		const updatedUser = await this.prisma.user.update({
+			where: { id },
+			data: {
+				balance: {
+					increment: dto.increment,
+				},
+			},
+		});
+
+		return {
+			id: updatedUser.id,
+			username: updatedUser.username,
+			balance: updatedUser.balance,
+		};
+
+	}
+
+	async updateUser(params: {
+		id: string;
+		dto: UpdateUserRequestDto;
+	}): Promise<UpdateUserResponseDto> {
+		const { id, dto } = params;
+		
+		const user = await this.prisma.user.findUnique({
+		where: { id },
+		});
+
+		if (!user) throw new NotFoundException('User not found');
+		if (user.is_admin) throw new BadRequestException('Admin users cannot be updated');
+
+		const updatedUser = await this.prisma.user.update({
+			data: {
+				username: dto.username,
+				email: dto.email,
+				first_name: dto.first_name,
+				last_name: dto.last_name,
+				password_hash: dto.password ? await this.hashService.hashPassword(dto.password) : undefined,
+			},
+			where: { id },
+		});
+
+		return {
+			id: updatedUser.id,
+			username: updatedUser.username,
+			first_name: updatedUser.first_name,
+			last_name: updatedUser.last_name,
+			balance: updatedUser.balance,
+		};
+	}
+
+	async deleteUser(
+		id: string
+	): Promise<void> {
+		const user = await this.prisma.user.findUnique({
+			where: { id },
+		});
+
+		if (!user) throw new NotFoundException('User not found');
+		if (user.is_admin) throw new BadRequestException('Admin users cannot be deleted');
+
+		await this.prisma.user.delete({
+			where: { id },
+		});
+	}
 }

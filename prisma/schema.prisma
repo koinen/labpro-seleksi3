@@ -14,27 +14,30 @@ datasource db {
 }
 
 model Course {
-  id              Int       @id @default(autoincrement())
-  title           String    @db.VarChar(255)
-  description     String    @db.VarChar(255)
-  instructor      String    @db.VarChar(255)
-  topics          Topic[]
-  price           Decimal   @db.Decimal(10, 2)
-  thumbnail_image String?   @db.VarChar(255)
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  id                  String    @id @default(cuid())
+  title               String    @db.VarChar(255)
+  description         String    @db.VarChar(255)
+  instructor          String    @db.VarChar(255)
+  topics              Topic[]
+  price               Decimal   @db.Decimal(10, 2)
+  thumbnail_image     String?   @db.VarChar(255)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  progress_percentage Int       @default(0)
 
-  Enrollment      Enrollment[]
+  enrollment          Enrollment[]
+  module              Module[]
 }
 
 model Topic {
+  id         String    @id @default(cuid())
   name       String    @db.VarChar(255)
-  course     Course    @relation(fields: [course_id], references: [id])
-  course_id  Int       @id
+  course_id  String
+  course     Course    @relation(fields: [course_id], references: [id], onDelete: Cascade)
 }
 
 model Module {
-  course_id     Int
+  id            String    @id @default(cuid())
   title         String    @db.VarChar(255)
   description   String    @db.VarChar(255)
   pdf_content   String?   @db.VarChar(255)
@@ -42,29 +45,44 @@ model Module {
   order         Int       @unique
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
+  course        Course    @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  course_id     String
+
+  progress      UserModuleProgress[]
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(cuid())
   username      String   @unique @db.VarChar(255)
   email         String   @unique @db.VarChar(255)
   first_name    String   @db.VarChar(255)
   last_name     String   @db.VarChar(255)
-  balance       Decimal  @db.Decimal(10, 2) @default(0)
+  balance       Int      @default(0)
   password_hash String   @db.VarChar(255)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
+  is_admin      Boolean  @default(false)
+  enrollment    Enrollment[]
 
-  Enrollment    Enrollment[]
+  module_progress  UserModuleProgress[]
 }
 
 model Enrollment {
-  id         Int      @id @default(autoincrement())
-  user_id    Int
-  course_id  Int
-  status     String   @db.VarChar(255)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  user       User     @relation(fields: [user_id], references: [id])
-  course     Course   @relation(fields: [course_id], references: [id])
+  id                   String   @id @default(cuid())
+  user_id              String
+  course_id            String
+  enrolled_at          DateTime @default(now())
+
+  user                 User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course              Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+}
+
+model UserModuleProgress {
+  user_id       String
+  module_id     String
+  is_completed  Boolean  @default(false)
+
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  module        Module   @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  @@id([user_id, module_id])
 }

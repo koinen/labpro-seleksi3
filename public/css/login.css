@@ -1,0 +1,24 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 320px;
+  padding: 40px;
+}
+
+h1 {
+  margin-bottom: 32px; /* override global */
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.link {
+  text-align: center;
+  margin-top: 24px;
+}
