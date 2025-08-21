@@ -94,7 +94,7 @@ export class ModuleService {
 				order: module.order,
 				pdf_content: module.pdf_content,
 				video_content: module.video_content,
-				is_completed: module.progress[0]?.is_completed || false,
+				is_completed: is_admin ? false : module.progress[0]?.is_completed,
 				created_at: module.created_at.toString(),
 				updated_at: module.updated_at.toString(),
 			})),
