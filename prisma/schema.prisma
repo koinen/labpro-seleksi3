@@ -42,7 +42,7 @@ model Module {
   description   String    @db.VarChar(255)
   pdf_content   String?   @db.VarChar(255)
   video_content String?   @db.VarChar(255)
-  order         Int       @unique
+  order         Int       
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
   course        Course    @relation(fields: [course_id], references: [id], onDelete: Cascade)

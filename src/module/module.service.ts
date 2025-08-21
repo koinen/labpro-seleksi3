@@ -22,8 +22,12 @@ export class ModuleService {
 			video_content: string | undefined,
 		}
 	): Promise<CreateModuleResponseDto> {
-		const moduleCount = await this.prisma.module.count({
-			where: { course_id: param.course_id, }
+		const last = await this.prisma.module.findFirst({
+			where: { course_id: param.course_id },
+			orderBy: { order: 'desc' },
+			select: {
+				order: true
+			}
 		});
 
 		const module = await this.prisma.module.create({
@@ -32,7 +36,7 @@ export class ModuleService {
 				description: dto.description,
 				pdf_content: param.pdf_content,
 				video_content: param.video_content,
-				order: moduleCount + 1,
+				order: last ? last.order + 1 : 1,
 				course_id: param.course_id,
 			}
 		});
