@@ -16,7 +16,7 @@ export class CourseService {
 
 	async create(
 		dto: CreateCourseRequestDto, 
-		thumbnail_image: Express.Multer.File
+		file_name: string
 	): Promise<CourseResponseDto> {
 
 		const createdCourse = await this.prisma.course.create({
@@ -25,7 +25,7 @@ export class CourseService {
 				description: dto.description,
 				instructor: dto.instructor,
 				price: dto.price,
-				thumbnail_image: thumbnail_image?.filename,
+				thumbnail_image: file_name,
 				topics: {
 					create: dto.topics.map(topic => ({ name: topic })),
 				}
@@ -41,7 +41,7 @@ export class CourseService {
 			description: createdCourse.description,
 			instructor: createdCourse.instructor,
 			price: createdCourse.price.toNumber(),
-			thumbnail_image: createdCourse.thumbnail_image,
+			thumbnail_image: `${process.env.BACKEND_URL}/uploads/${createdCourse.thumbnail_image}`,
 			topics: createdCourse.topics.map(topic => topic.name),
 			created_at: createdCourse.created_at.toString(),
 			updated_at: createdCourse.updated_at.toString(),
@@ -92,7 +92,7 @@ export class CourseService {
 				description: course.description,
 				instructor: course.instructor,
 				price: course.price.toNumber(),
-				thumbnail_image: course.thumbnail_image,
+				thumbnail_image: `${process.env.BACKEND_URL}/uploads/${course.thumbnail_image}`,
 				topics: course.topics.map(topic => topic.name),
 				created_at: course.created_at.toString(),
 				updated_at: course.updated_at.toString(),
@@ -169,7 +169,7 @@ export class CourseService {
 				description: course.description,
 				instructor: course.instructor,
 				price: course.price.toNumber(),
-				thumbnail_image: course.thumbnail_image,
+				thumbnail_image: `${process.env.BACKEND_URL}/uploads/${course.thumbnail_image}`,
 				topics: course.topics.map(topic => topic.name),
 				created_at: course.created_at.toString(),
 				updated_at: course.updated_at.toString(),
@@ -202,7 +202,7 @@ export class CourseService {
 			description: course.description,
 			instructor: course.instructor,
 			price: course.price.toNumber(),
-			thumbnail_image: course.thumbnail_image,
+			thumbnail_image: `${process.env.BACKEND_URL}/uploads/${course.thumbnail_image}`,
 			topics: course.topics.map(topic => topic.name),
 			created_at: course.created_at.toString(),
 			updated_at: course.updated_at.toString(),
@@ -238,7 +238,7 @@ export class CourseService {
 			description: updatedCourse.description,
 			instructor: updatedCourse.instructor,
 			price: updatedCourse.price.toNumber(),
-			thumbnail_image: updatedCourse.thumbnail_image,
+			thumbnail_image: `${process.env.BACKEND_URL}/uploads/${updatedCourse.thumbnail_image}`,
 			topics: updatedCourse.topics.map(topic => topic.name),
 			created_at: updatedCourse.created_at.toString(),
 			updated_at: updatedCourse.updated_at.toString(),

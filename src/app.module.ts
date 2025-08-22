@@ -6,11 +6,11 @@ import { ModuleModule } from './module/module.module';
 import { CourseModule } from './course/course.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
-import { ProtectedPagesController } from './protected-page.controller';
+import { ProtectedPageController } from './protected-page.controller';
 
 @Module({
   imports: [UserModule, ModuleModule, CourseModule, AuthModule, CommonModule],
-  controllers: [PublicPageController, ProtectedPagesController],
+  controllers: [PublicPageController, ProtectedPageController],
   providers: [AppService],
 })
 export class AppModule {}

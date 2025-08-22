@@ -29,16 +29,27 @@ export class CourseController {
 	) {}
 
 	@Post()
-	@UseInterceptors(FileInterceptor('thumbnail_image'))
+	@UseInterceptors(
+		FileInterceptor('thumbnail_image', {
+			storage: diskStorage({
+				destination: './uploads',
+				filename: (req, file, cb) => {
+					const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
+					cb(null, file.fieldname + '-' + unique + '.' + file.originalname.split('.').pop());
+				}
+			})
+		}),
+	)
 	@ApiOperation({ summary: 'Create a new course' })
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course created successfully' })
 	async create(
 		@Body() dto: CreateCourseRequestDto,
 		@UploadedFile() thumbnail_image: Express.Multer.File,
-		@User() req: JwtPayload
+		@User() req: JwtPayload,
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to create courses');
-		const course = await this.courseService.create(dto, thumbnail_image);
+		const fileName = thumbnail_image.filename;
+		const course = await this.courseService.create(dto, fileName);
 		return new SuccessResponseBuilder()
 			.setData(course)
 			.build();
@@ -160,13 +171,13 @@ export class CourseController {
 		@User() req: JwtPayload,
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to create modules');
-		
-		const pdfPath = files.pdf_content?.[0]?.path;
-		const videoPath = files.video_content?.[0]?.path;
+
+		const pdf = files.pdf_content?.[0]?.filename;
+		const video = files.video_content?.[0]?.filename;
 		const module = await this.moduleService.create(dto, {
 			course_id: courseId,
-			pdf_content: pdfPath,
-			video_content: videoPath
+			pdf_content: pdf,
+			video_content: video
 		});
 
 		return new SuccessResponseBuilder()

@@ -58,11 +58,11 @@ export class ModuleController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to update modules');
 		
-		const pdfPath = files.pdf_content?.[0]?.path;
-		const videoPath = files.video_content?.[0]?.path;
+		const pdf = files.pdf_content?.[0]?.filename;
+		const video = files.video_content?.[0]?.filename;
 		const module = await this.moduleService.update(id, dto, {
-			pdf_content: pdfPath,
-			video_content: videoPath
+			pdf_content: pdf,
+			video_content: video
 		});
 
 		return new SuccessResponseBuilder()
