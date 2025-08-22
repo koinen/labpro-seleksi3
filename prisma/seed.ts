@@ -10,6 +10,11 @@ async function main() {
     // Add more seed data as needed for your schema
     // Seed Courses
 
+    // delete all entries
+    await prisma.course.deleteMany({});
+    await prisma.module.deleteMany({});
+    await prisma.user.deleteMany({});
+
     const course1 = await prisma.course.create({
         data: {
             title: 'Introduction to Programming',

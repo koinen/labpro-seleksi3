@@ -34,8 +34,8 @@ export class ModuleService {
 			data: {
 				title: dto.title,
 				description: dto.description,
-				pdf_content: `${process.env.BACKEND_URL}/uploads/${param.pdf_content}`,
-				video_content: `${process.env.BACKEND_URL}/uploads/${param.video_content}`,
+				pdf_content: param.pdf_content,
+				video_content: param.video_content,
 				order: last ? last.order + 1 : 1,
 				course_id: param.course_id,
 			}
