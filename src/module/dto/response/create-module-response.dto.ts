@@ -8,6 +8,9 @@ export class CreateModuleResponseDto {
     title: string;
 
     @ApiProperty({ type: String })
+    course_id: string;
+
+    @ApiProperty({ type: String })
     description: string;
 
     @ApiProperty({ type: Number })
