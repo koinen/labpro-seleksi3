@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import { IsNotEmpty, IsString, IsArray, IsNumber } from "class-validator"; 
 
 export class CreateCourseRequestDto {
@@ -18,9 +18,9 @@ export class CreateCourseRequestDto {
     @ApiProperty({ example: 'John Doe' })
     instructor: string;
 
-    @IsNotEmpty()
     @IsArray()
     @IsString({ each: true })
+    @Transform(({ value }) => (typeof value === 'string' ? [value] : value))
     @ApiProperty({ example: ['programming', 'basics'] })
     topics: string[];
 
