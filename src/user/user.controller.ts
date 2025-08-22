@@ -85,5 +85,6 @@ export class UserController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You are not allowed to perform this action');
       	await this.userService.deleteUser(id);
+		return { message: "User deleted successfully" };
   	}
 }

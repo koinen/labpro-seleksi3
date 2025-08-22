@@ -126,6 +126,7 @@ export class CourseController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to delete courses');
 		await this.courseService.remove(id);
+		return { message: "Course deleted successfully" };
 	}
 
 	@Post(':id/buy')

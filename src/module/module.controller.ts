@@ -79,6 +79,7 @@ export class ModuleController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to delete modules');
 		await this.moduleService.remove(id);
+		return { message: "Module deleted successfully" };
 	}
 
 	@Patch(':id/complete')
