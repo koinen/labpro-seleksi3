@@ -11,6 +11,7 @@ import { CreateModuleRequestDto } from './dto/request/create-module-request.dto'
 import { User } from 'src/common/decorators/user.decorator';
 import type { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { ModuleResponseDto } from './dto/response/get-modules-response.dto';
+import { UploadFiles } from 'src/common/decorators/upload-file.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('api/module')
@@ -29,20 +30,10 @@ export class ModuleController {
 	
 	@Put(':id')
 	@UseInterceptors(
-		FileFieldsInterceptor([
-				{ name: 'pdf_content', maxCount: 1 },
-				{ name: 'video_content', maxCount: 1 },
-			],
-			{
-				storage: diskStorage({
-					destination: './uploads',
-					filename: (req, file, cb) => {
-						const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-						cb(null, file.fieldname + '-' + unique + '.' + file.originalname.split('.').pop());
-					}
-				})
-			}
-		),
+		UploadFiles([
+			{ name: 'pdf_content', maxCount: 1 },
+			{ name: 'video_content', maxCount: 1 },
+		])
 	)
 	@ApiOperation({ summary: 'Update a module' })
 	@ApiOkResponse({ type: createSwaggerResponse(CreateModuleResponseDto), description: 'Module updated successfully' })

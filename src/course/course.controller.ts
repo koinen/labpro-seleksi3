@@ -19,6 +19,7 @@ import { ModuleService } from 'src/module/module.service';
 import { CreateModuleResponseDto } from 'src/module/dto/response/create-module-response.dto';
 import { ReorderModulesDto } from 'src/module/dto/reorder-modules.dto';
 import { GetModulesResponse, ModuleResponseDto } from 'src/module/dto/response/get-modules-response.dto';
+import { UploadFile, UploadFiles } from 'src/common/decorators/upload-file.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('api/courses')
@@ -29,17 +30,7 @@ export class CourseController {
 	) {}
 
 	@Post()
-	@UseInterceptors(
-		FileInterceptor('thumbnail_image', {
-			storage: diskStorage({
-				destination: './uploads',
-				filename: (req, file, cb) => {
-					const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-					cb(null, file.fieldname + '-' + unique + '.' + file.originalname.split('.').pop());
-				}
-			})
-		}),
-	)
+	@UseInterceptors(UploadFile('thumbnail_image'))
 	@ApiOperation({ summary: 'Create a new course' })
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course created successfully' })
 	async create(
@@ -102,6 +93,7 @@ export class CourseController {
 	}
 
 	@Put(':id')
+	@UseInterceptors(UploadFile('thumbnail_image'))
 	@ApiOperation({ summary: 'Update a course by ID' })
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course updated successfully' })
 	async update(
@@ -111,7 +103,7 @@ export class CourseController {
 		@User() req: JwtPayload
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to update courses');
-		const updatedCourse = await this.courseService.update(id, updateCourseDto, thumbnail_image);
+		const updatedCourse = await this.courseService.update(id, updateCourseDto, thumbnail_image?.filename);
 		return new SuccessResponseBuilder()
 			.setData(updatedCourse)
 			.build();
@@ -144,20 +136,10 @@ export class CourseController {
 
   	@Post(':id/modules')
 	@UseInterceptors(
-		FileFieldsInterceptor([
-				{ name: 'pdf_content', maxCount: 1 },
-				{ name: 'video_content', maxCount: 1 },
-			],
-			{
-				storage: diskStorage({
-					destination: './uploads',
-					filename: (req, file, cb) => {
-						const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-						cb(null, file.fieldname + '-' + unique + '.' + file.originalname.split('.').pop());
-					}
-				})
-			}
-		),
+		UploadFiles([
+			{ name: 'pdf_content', maxCount: 1 },
+			{ name: 'video_content', maxCount: 1 },
+		])
 	)
 	@ApiOperation({ summary: 'Create a new module for a course' })
 	@ApiOkResponse({ type: createSwaggerResponse(CreateModuleResponseDto), description: 'Module created successfully' })

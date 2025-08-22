@@ -6,12 +6,16 @@ import { CourseSummary, GetCoursesResponse } from './dto/response/get-courses-re
 import { UpdateCourseRequestDto } from './dto/request/update-course-request.dto';
 import { GetMyCoursesResponseDto } from './dto/response/get-my-courses-response.dto';
 import { BuyCourseResponse } from './dto/response/buy-course-response.dto';
+import * as fs from 'fs/promises';
+import path from 'path';
+import { FileService } from 'src/common/file.service';
 
 
 @Injectable()
 export class CourseService {
 	constructor(
 		private prisma: PrismaService,
+		private readonly fileService: FileService, // Assuming you have a FileService for handling file operations
 	) {}
 
 	async create(
@@ -213,24 +217,31 @@ export class CourseService {
 	async update(
 		id: string,
 		dto: UpdateCourseRequestDto,
-		thumbnail_image: Express.Multer.File | undefined
+		thumbnail_image: string | undefined
 	): Promise<CourseResponseDto> {
-		const updatedCourse = await this.prisma.course.update({
-			where: { id },
-			data: {
-				title: dto.title,
-				description: dto.description,
-				instructor: dto.instructor,
-				price: dto.price,
-				thumbnail_image: thumbnail_image?.filename,
-				topics: {
-					create: (dto.topics ?? []).map(topic => ({ name: topic })),
-				}
-			},
-			include: {
-				topics: true, 
-			},
-		});
+		const [ oldCourse, updatedCourse ] = await this.prisma.$transaction([
+			this.prisma.course.findUnique({
+				where: { id },
+			}),
+			this.prisma.course.update({
+				where: { id },
+				data: {
+					title: dto.title,
+					description: dto.description,
+					instructor: dto.instructor,
+					price: dto.price,
+					thumbnail_image: thumbnail_image,
+					topics: {
+						create: (dto.topics ?? []).map(topic => ({ name: topic })),
+					}
+				},
+				include: {
+					topics: true, 
+				},
+			})
+		]);
+
+		this.fileService.deleteFile(oldCourse?.thumbnail_image);
 
 		return {
 			id: updatedCourse.id,
@@ -246,9 +257,11 @@ export class CourseService {
 	}
 
 	async remove(id: string): Promise<void> {
-		await this.prisma.course.delete({
+		const course = await this.prisma.course.delete({
 			where: { id },
 		});
+
+		this.fileService.deleteFile(course.thumbnail_image);
 	}
 
 	async buyCourse(

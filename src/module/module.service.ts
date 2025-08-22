@@ -7,11 +7,14 @@ import { ReorderModulesDto } from './dto/reorder-modules.dto';
 import { promises as fs } from 'fs';
 import { CompleteModuleDto } from './dto/response/complete-module.dto';
 import { CreateModuleResponseDto } from './dto/response/create-module-response.dto';
+import path from 'path';
+import { FileService } from 'src/common/file.service';
 
 @Injectable()
 export class ModuleService {
 	constructor(
 		private prisma: PrismaService,
+		private fileService: FileService,
 	) {}
 
 	async create(
@@ -140,15 +143,24 @@ export class ModuleService {
 		}
 	): Promise<CreateModuleResponseDto> {
 		const { pdf_content, video_content } = param;
-		const updatedModule = await this.prisma.module.update({
-			where: { id },
-			data: {
-				title: dto.title,
-				description: dto.description,
-				pdf_content: pdf_content,
-				video_content: video_content,
-			}
-		});
+		const [ oldModule, updatedModule ] = await this.prisma.$transaction([
+			this.prisma.module.findUnique({
+				where: { id },
+			}),
+			this.prisma.module.update({
+				where: { id },
+				data: {
+					title: dto.title,
+					description: dto.description,
+					pdf_content: pdf_content,
+					video_content: video_content,
+				}
+			}),
+		]);
+
+		this.fileService.deleteFile(oldModule?.pdf_content);
+		this.fileService.deleteFile(oldModule?.video_content);
+
 		return {
 			id: updatedModule.id,
 			title: updatedModule.title,
@@ -166,17 +178,9 @@ export class ModuleService {
 			where: { id },
 		});
 
-		if (module.pdf_content) {
-			await fs.unlink(module.pdf_content).catch(() => {
-			console.warn(`File not found: ${module.pdf_content}`);
-			});
-		}
-
-		if (module.video_content) {
-			await fs.unlink(module.video_content).catch(() => {
-			console.warn(`File not found: ${module.video_content}`);
-			});
-		}
+		this.fileService.deleteFile(module.pdf_content);
+		this.fileService.deleteFile(module.video_content);
+		
 	}
 
 	async reorder(
