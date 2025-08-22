@@ -219,9 +219,12 @@ export class CourseService {
 		dto: UpdateCourseRequestDto,
 		thumbnail_image: string | undefined
 	): Promise<CourseResponseDto> {
-		const [ oldCourse, updatedCourse ] = await this.prisma.$transaction([
+		const [ oldCourse, _, updatedCourse ] = await this.prisma.$transaction([
 			this.prisma.course.findUnique({
 				where: { id },
+			}),
+			this.prisma.topic.deleteMany({
+				where: { course_id: id },
 			}),
 			this.prisma.course.update({
 				where: { id },
@@ -232,7 +235,6 @@ export class CourseService {
 					price: dto.price,
 					thumbnail_image: thumbnail_image,
 					topics: {
-						set: [],
 						create: (dto.topics ?? []).map(topic => ({ name: topic })),
 					}
 				},
