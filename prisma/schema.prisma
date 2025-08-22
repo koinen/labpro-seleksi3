@@ -30,10 +30,10 @@ model Course {
 }
 
 model Topic {
-  id         String    @id @default(cuid())
   name       String    @db.VarChar(255)
   course_id  String
   course     Course    @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  @@id([name, course_id])
 }
 
 model Module {

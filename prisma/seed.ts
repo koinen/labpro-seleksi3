@@ -14,6 +14,9 @@ async function main() {
     await prisma.course.deleteMany({});
     await prisma.module.deleteMany({});
     await prisma.user.deleteMany({});
+    await prisma.topic.deleteMany({});
+    await prisma.enrollment.deleteMany({});
+    await prisma.userModuleProgress.deleteMany({});
 
     const course1 = await prisma.course.create({
         data: {
