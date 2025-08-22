@@ -232,6 +232,7 @@ export class CourseService {
 					price: dto.price,
 					thumbnail_image: thumbnail_image,
 					topics: {
+						set: [],
 						create: (dto.topics ?? []).map(topic => ({ name: topic })),
 					}
 				},
