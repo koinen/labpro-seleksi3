@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Query, NotFoundException, ParseIntPipe, UseGuards, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Query, NotFoundException, ParseIntPipe, UseGuards, ForbiddenException, HttpCode, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserRequestDto } from './dto/request/update-user-request.dto';
 import { IncrementBalanceRequestDto } from './dto/request/increment-balance-request.dto';
@@ -77,6 +77,7 @@ export class UserController {
     }
 
     @Delete(':id')
+	@HttpCode(HttpStatus.NO_CONTENT)
     @ApiOperation({ summary: 'Delete user by ID (disabled for admin users)' })
     @ApiOkResponse({ description: 'User deleted successfully' })
     async remove(
@@ -85,6 +86,5 @@ export class UserController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You are not allowed to perform this action');
       	await this.userService.deleteUser(id);
-		return { message: "User deleted successfully" };
   	}
 }

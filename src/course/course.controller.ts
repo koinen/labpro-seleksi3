@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, UseGuards, Put, ForbiddenException, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, UseGuards, Put, ForbiddenException, UploadedFiles, HttpCode, HttpStatus } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseRequestDto } from './dto/request/create-course-request.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
@@ -118,6 +118,7 @@ export class CourseController {
 	}
 
 	@Delete(':id')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@ApiOperation({ summary: 'Delete a course by ID' })
 	@ApiOkResponse({ description: 'Course deleted successfully' })
 	async remove(
@@ -126,7 +127,6 @@ export class CourseController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to delete courses');
 		await this.courseService.remove(id);
-		return { message: "Course deleted successfully" };
 	}
 
 	@Post(':id/buy')

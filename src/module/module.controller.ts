@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, UseGuards, UseInterceptors, UploadedFiles, Put, Body, ForbiddenException, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Delete, UseGuards, UseInterceptors, UploadedFiles, Put, Body, ForbiddenException, Patch, HttpCode, HttpStatus } from '@nestjs/common';
 import { ModuleService } from './module.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
@@ -71,6 +71,7 @@ export class ModuleController {
 	}
 	
 	@Delete(':id')
+	@HttpCode(HttpStatus.NO_CONTENT) // Sets the HTTP status code to 204
 	@ApiOperation({ summary: 'Delete a module by ID' })
 	@ApiOkResponse({ description: 'Module deleted successfully' })
 	async remove(
@@ -79,7 +80,6 @@ export class ModuleController {
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to delete modules');
 		await this.moduleService.remove(id);
-		return { message: "Module deleted successfully" };
 	}
 
 	@Patch(':id/complete')
