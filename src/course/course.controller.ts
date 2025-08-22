@@ -35,11 +35,11 @@ export class CourseController {
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course created successfully' })
 	async create(
 		@Body() dto: CreateCourseRequestDto,
-		@UploadedFile() thumbnail_image: Express.Multer.File,
+		@UploadedFile() thumbnail_image: Express.Multer.File | undefined,
 		@User() req: JwtPayload,
 	) {
 		if (!req.is_admin) throw new ForbiddenException('You do not have permission to create courses');
-		const fileName = thumbnail_image.filename;
+		const fileName = thumbnail_image?.filename;
 		const course = await this.courseService.create(dto, fileName);
 		return new SuccessResponseBuilder()
 			.setData(course)

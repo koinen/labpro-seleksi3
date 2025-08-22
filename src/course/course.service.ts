@@ -20,7 +20,7 @@ export class CourseService {
 
 	async create(
 		dto: CreateCourseRequestDto, 
-		file_name: string
+		file_name: string | undefined
 	): Promise<CourseResponseDto> {
 
 		const createdCourse = await this.prisma.course.create({
