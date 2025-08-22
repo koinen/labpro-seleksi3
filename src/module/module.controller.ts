@@ -14,7 +14,7 @@ import { ModuleResponseDto } from './dto/response/get-modules-response.dto';
 import { UploadFiles } from 'src/common/decorators/upload-file.decorator';
 
 @UseGuards(AuthGuard)
-@Controller('api/module')
+@Controller('api/modules')
 export class ModuleController {
 	constructor( private readonly moduleService: ModuleService) {}
 
