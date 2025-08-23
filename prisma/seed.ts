@@ -24,7 +24,6 @@ async function main() {
             description: 'Learn the basics of programming using Python.',
             instructor: 'Dr. John Doe',
             price: 99.99,
-            thumbnail_image: 'intro_programming.jpg',
             topics: {
                 create: [
                     { name: 'Variables' },
@@ -41,7 +40,6 @@ async function main() {
             description: 'A beginner-friendly course on web development.',
             instructor: 'Ms. Jane Smith',
             price: 129.99,
-            thumbnail_image: 'web_dev_fundamentals.jpg',
             topics: {
                 create: [
                     { name: 'HTML' },
@@ -59,7 +57,7 @@ async function main() {
             email: 'alice@example.com',
             first_name: 'Alice',
             last_name: 'Smith',
-            password_hash: bcrypt.hashSync('hashedpassword1', 10), // Replace with actual hash in production
+            password_hash: bcrypt.hashSync('alice123', 10), 
         },
     });
 
@@ -69,7 +67,7 @@ async function main() {
             email: 'bob@example.com',
             first_name: 'Bob',
             last_name: 'Johnson',
-            password_hash: bcrypt.hashSync('hashedpassword2', 10), // Replace with actual hash in production
+            password_hash: bcrypt.hashSync('bob123', 10), 
         },
     });
 
@@ -79,7 +77,7 @@ async function main() {
             email: 'admin@example.com',
             first_name: 'Admin',
             last_name: 'User',
-            password_hash: bcrypt.hashSync('hashedadminpassword', 10), // Replace with actual hash in production,
+            password_hash: bcrypt.hashSync('admin123', 10),
             is_admin: true,
         },
     });
@@ -90,8 +88,6 @@ async function main() {
             course_id: course1.id,
             title: 'Getting Started',
             description: 'Introduction to the course and setup.',
-            pdf_content: 'getting_started.pdf',
-            video_content: 'getting_started.mp4',
             order: 1
         }
     });
@@ -101,8 +97,6 @@ async function main() {
             course_id: course1.id,
             title: 'Variables and Data Types',
             description: 'Understanding variables and data types.',
-            pdf_content: 'variables.pdf',
-            video_content: 'variables.mp4',
             order: 2
         }
     });
@@ -113,8 +107,6 @@ async function main() {
             course_id: course2.id,
             title: 'HTML Basics',
             description: 'Learn the basics of HTML.',
-            pdf_content: 'html_basics.pdf',
-            video_content: 'html_basics.mp4',
             order: 3
         },
     });
@@ -124,8 +116,6 @@ async function main() {
             course_id: course2.id,
             title: 'CSS Fundamentals',
             description: 'Introduction to CSS.',
-            pdf_content: 'css_fundamentals.pdf',
-            video_content: 'css_fundamentals.mp4',
             order: 4
         }
     });
