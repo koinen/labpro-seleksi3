@@ -18,8 +18,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
   
-  app.useStaticAssets(join(__dirname, '..', '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', '..', 'views'));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
   app.useGlobalPipes(
