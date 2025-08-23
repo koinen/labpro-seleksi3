@@ -9,7 +9,6 @@ import { createSwaggerResponse } from 'src/common/response/swagger-response-fact
 import { LoginResponseDto } from './dto/response/login-response.dto';
 import { SuccessResponseBuilder } from 'src/common/response/response-builder';
 import { UserSummary } from 'src/user/dto/response/get-users-response.dto';
-import type { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 
 @Controller('api/auth')
 export class AuthController {
@@ -18,11 +17,8 @@ export class AuthController {
     @Post('login')
     @ApiOperation({ summary: 'Login user for Admin' })
     @ApiOkResponse({ type: createSwaggerResponse(LoginResponseDto), description: 'Admin logged in successfully' })
-    async login(
-        @Body() loginDto: LoginRequestDto,
-        @User() req: JwtPayload,
-    ) {
-        const user = await this.authService.login(loginDto, req.is_admin);
+    async login(@Body() loginDto: LoginRequestDto) {
+        const user = await this.authService.login(loginDto, true);
         return new SuccessResponseBuilder()
             .setData(user)
             .build();
