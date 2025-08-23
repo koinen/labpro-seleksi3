@@ -16,7 +16,7 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    async register(dto: RegisterRequestDto, is_admin: boolean = false): Promise<RegisterResponseDto> {
+    async register(dto: RegisterRequestDto): Promise<RegisterResponseDto> {
     
         const user = await this.prisma.user.create({
             data: {
@@ -25,7 +25,6 @@ export class AuthService {
                 first_name: dto.first_name,
                 last_name: dto.last_name,
                 password_hash: await this.hashService.hashPassword(dto.password),
-                is_admin,
             },
         });
 

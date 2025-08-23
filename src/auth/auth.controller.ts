@@ -49,19 +49,9 @@ export class AuthController {
     @ApiOkResponse({ type: createSwaggerResponse(LoginResponseDto), description: 'Admin registered successfully' })
     @ApiOperation({ summary: 'Register a new admin' })
     async register(@Body() registerDto: RegisterRequestDto) {
-        const admin = this.authService.register(registerDto, true);
+        const admin = this.authService.register(registerDto);
         return new SuccessResponseBuilder()
             .setData(admin)
-            .build();
-    }
-
-    @Post('user-register')
-    @ApiOperation({ summary: 'Register a new user' })
-    @ApiOkResponse({ type: createSwaggerResponse(LoginResponseDto), description: 'User registered successfully' })
-    async userRegister(@Body() registerDto: RegisterRequestDto) {
-        const user = this.authService.register(registerDto);
-        return new SuccessResponseBuilder()
-            .setData(user)
             .build();
     }
 }
