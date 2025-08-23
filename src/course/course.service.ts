@@ -53,22 +53,22 @@ export class CourseService {
 	}
 
 	async courses( params: {
-		search: string;
+		q: string;
 		page: number;
 		limit: number;
 	}): Promise<GetCoursesResponse> {
-		const { search, page, limit } = params;
+		const { q, page, limit } = params;
 		const [courses, total] = await this.prisma.$transaction([
 			this.prisma.course.findMany({
 				where: {
 					OR: [
-						{ title: { contains: search } },
+						{ title: { contains: q } },
 						{ topics: { 
 							some: {
-              					name: { contains: search },
-            				}, 
+								name: { contains: q },
+							},
 						} },
-						{ instructor: { contains: search } },
+						{ instructor: { contains: q } },
 					],
 				},
 				skip: (page - 1) * limit,
@@ -83,8 +83,13 @@ export class CourseService {
 			this.prisma.course.count({
 				where: {
 					OR: [
-						{ title: { contains: search } },
-						{ description: { contains: search } },
+						{ title: { contains: q } },
+						{ topics: { 
+							some: {
+              					name: { contains: q },
+            				}, 
+						} },
+						{ instructor: { contains: q } },
 					],
 				},
 			}),
@@ -109,19 +114,19 @@ export class CourseService {
 	async myCourses(
 		userId: string,
 		params: {
-			search: string;
+			q: string;
 			page: number;
 			limit: number;
 		}
 	): Promise<GetMyCoursesResponseDto> {
-		const { search, page, limit } = params;
+		const { q, page, limit } = params;
 		const [ courses, total ] = await this.prisma.$transaction([
 			this.prisma.course.findMany({
 				where: {
 						OR: [
-							{ title: { contains: search } },
-							{ topics: { some: { name: { contains: search } } } },
-							{ instructor: { contains: search } },
+							{ title: { contains: q } },
+							{ topics: { some: { name: { contains: q } } } },
+							{ instructor: { contains: q } },
 						],
 						enrollment: { some: { user_id: userId } },
 					},
@@ -136,9 +141,11 @@ export class CourseService {
 			this.prisma.course.count({
 				where: {
 				OR: [
-					{ title: { contains: search } },
-					{ description: { contains: search } },
-				],
+						{ title: { contains: q } },
+						{ topics: { some: { name: { contains: q } } } },
+						{ instructor: { contains: q } },
+					],
+					enrollment: { some: { user_id: userId } },
 				},
 			}),
 		]);

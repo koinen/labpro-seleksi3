@@ -6,7 +6,7 @@ export class PaginationQueryDto {
     @ApiProperty({ required: false, example: '' })
     @IsString()
     @IsOptional()
-    search: string = '';
+    q: string = '';
 
     @ApiProperty({ required: false, example: 1, default: 1 })
     @Type(() => Number)

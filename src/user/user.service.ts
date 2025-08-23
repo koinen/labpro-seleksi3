@@ -41,19 +41,19 @@ export class UserService {
   	}
 
   	async users(params: {
-    	search: string;
+    	q: string;
 		page: number;
 		limit: number;
   	}): Promise<GetUsersResponse> {
-		const { search, page, limit } = params;
+		const { q, page, limit } = params;
 		const [users, total] = await this.prisma.$transaction([
 			this.prisma.user.findMany({
 				where: {
 					OR: [
-						{ username: { contains: search } },
-						{ email: { contains: search } },
-						{ first_name: { contains: search } },
-						{ last_name: { contains: search } },
+						{ username: { contains: q } },
+						{ email: { contains: q } },
+						{ first_name: { contains: q } },
+						{ last_name: { contains: q } },
 					],
 				},
 				select: {
@@ -70,10 +70,10 @@ export class UserService {
 			this.prisma.user.count({
 				where: {
 					OR: [
-						{ username: { contains: search } },
-						{ email: { contains: search } },
-						{ first_name: { contains: search } },
-						{ last_name: { contains: search } },
+						{ username: { contains: q } },
+						{ email: { contains: q } },
+						{ first_name: { contains: q } },
+						{ last_name: { contains: q } },
 					],
 				},
 			}),

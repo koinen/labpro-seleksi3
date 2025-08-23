@@ -17,6 +17,7 @@ export class AuthService {
     ) {}
 
     async register(dto: RegisterRequestDto, is_admin: boolean = false): Promise<RegisterResponseDto> {
+    
         const user = await this.prisma.user.create({
             data: {
                 username: dto.username,

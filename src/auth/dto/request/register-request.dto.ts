@@ -1,6 +1,6 @@
 import { IsEmail, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Match } from './confirm-password.validator';
+import { IsValidPassword, IsValidUsername, Match } from './register.validator';
 
 export class RegisterRequestDto {
     @ApiProperty({ type: String })
@@ -13,6 +13,7 @@ export class RegisterRequestDto {
 
     @ApiProperty({ type: String })
     @IsString()
+    @IsValidUsername()
     username: string;
 
     @ApiProperty({ type: String })
@@ -21,6 +22,7 @@ export class RegisterRequestDto {
 
     @ApiProperty({ type: String })
     @IsString()
+    @IsValidPassword()
     password: string;
 
     @ApiProperty({ type: String })
