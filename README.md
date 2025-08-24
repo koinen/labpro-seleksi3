@@ -35,6 +35,9 @@ Strategy Pattern digunakan dalam pembuatan StorageStrategy, dan dibuat dengan me
 1. Login
 2. Register 
 
+## Screenshot
+![screenshot](https://github.com/koinen/labpro-seleksi3/blob/main/public/assets/Screenshot.png?raw=true)
+
 ## Bonus
 - B02 - Deployment
 - B07 - Dokumentasi API
