@@ -4,12 +4,6 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-    // Example seed data, adjust according to your schema
-    // Replace 'User', 'Post', etc. with your actual model names and fields
-
-    // Add more seed data as needed for your schema
-    // Seed Courses
-
     // delete all entries
     await prisma.course.deleteMany({});
     await prisma.module.deleteMany({});

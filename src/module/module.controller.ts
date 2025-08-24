@@ -5,13 +5,11 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { createSwaggerResponse } from 'src/common/response/swagger-response-factory';
 import { CreateModuleResponseDto } from './dto/response/create-module-response.dto';
 import { SuccessResponseBuilder } from 'src/common/response/response-builder';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { CreateModuleRequestDto } from './dto/request/create-module-request.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import type { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { ModuleResponseDto } from './dto/response/get-modules-response.dto';
-import { UploadFiles } from 'src/common/decorators/upload-file.decorator';
+import { UploadContentFiles } from 'src/common/decorators/upload-file.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('api/modules')
@@ -30,7 +28,7 @@ export class ModuleController {
 	
 	@Put(':id')
 	@UseInterceptors(
-		UploadFiles([
+		UploadContentFiles([
 			{ name: 'pdf_content', maxCount: 1 },
 			{ name: 'video_content', maxCount: 1 },
 		])

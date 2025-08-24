@@ -19,7 +19,7 @@ import { ModuleService } from 'src/module/module.service';
 import { CreateModuleResponseDto } from 'src/module/dto/response/create-module-response.dto';
 import { ReorderModulesDto } from 'src/module/dto/reorder-modules.dto';
 import { GetModulesResponse, ModuleResponseDto } from 'src/module/dto/response/get-modules-response.dto';
-import { UploadFile, UploadFiles } from 'src/common/decorators/upload-file.decorator';
+import { UploadImageFile, UploadContentFiles } from 'src/common/decorators/upload-file.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('api/courses')
@@ -30,7 +30,7 @@ export class CourseController {
 	) {}
 
 	@Post()
-	@UseInterceptors(UploadFile('thumbnail_image'))
+	@UseInterceptors(UploadImageFile('thumbnail_image'))
 	@ApiOperation({ summary: 'Create a new course' })
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course created successfully' })
 	async create(
@@ -93,7 +93,7 @@ export class CourseController {
 	}
 
 	@Put(':id')
-	@UseInterceptors(UploadFile('thumbnail_image'))
+	@UseInterceptors(UploadImageFile('thumbnail_image'))
 	@ApiOperation({ summary: 'Update a course by ID' })
 	@ApiOkResponse({ type: createSwaggerResponse(CourseResponseDto), description: 'Course updated successfully' })
 	async update(
@@ -136,7 +136,7 @@ export class CourseController {
 
   	@Post(':id/modules')
 	@UseInterceptors(
-		UploadFiles([
+		UploadContentFiles([
 			{ name: 'pdf_content', maxCount: 1 },
 			{ name: 'video_content', maxCount: 1 },
 		])

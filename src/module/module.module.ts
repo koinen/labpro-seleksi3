@@ -3,11 +3,11 @@ import { ModuleService } from './module.service';
 import { ModuleController } from './module.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { FileService } from 'src/common/file.service';
-
+import { StorageModule } from 'src/storage/storage.module';
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, StorageModule],
   controllers: [ModuleController],
-  providers: [ModuleService, PrismaService, FileService],
+  providers: [ModuleService, PrismaService],
+  exports: [ModuleService],
 })
 export class ModuleModule {}

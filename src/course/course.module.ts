@@ -3,12 +3,12 @@ import { CourseService } from './course.service';
 import { CourseController } from './course.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ModuleService } from 'src/module/module.service';
-import { FileService } from 'src/common/file.service';
+import { StorageModule } from 'src/storage/storage.module';
+import { ModuleModule } from 'src/module/module.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, StorageModule, ModuleModule],
   controllers: [CourseController],
-  providers: [CourseService, PrismaService, ModuleService, FileService],
+  providers: [CourseService, PrismaService],
 })
 export class CourseModule {}

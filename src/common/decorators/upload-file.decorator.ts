@@ -1,32 +1,24 @@
+import { BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 
-
-function createMulterOptions(destination = './uploads') {
+function createMulterOptions(destination = './uploads', validExtensions: string[]) {
     return {
-        storage: diskStorage({
-            destination,
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                const ext = file.originalname.split('.').pop();
-                cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
-            },
-        }),
+        storage: memoryStorage(),
         limits: {
             fileSize: 10 * 1024 * 1024, // 10 MB
         },
         fileFilter: (req, file, cb) => {
-            if (['pdf', 'mp4', 'jpg', 'png'].includes(file.originalname.split('.').pop())) {
+            if (validExtensions.includes(file.originalname.split('.').pop())) {
                 cb(null, true);
             } else {
-                cb(new Error('Invalid file type'), false);
+                cb(new BadRequestException('Invalid file type'), false);
             }
         },
     };
 }
+export const UploadImageFile = (fieldName: string, destination?: string) =>
+  FileInterceptor(fieldName, createMulterOptions(destination, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'svg']));
 
-export const UploadFile = (fieldName: string, destination?: string) =>
-  FileInterceptor(fieldName, createMulterOptions(destination));
-
-export const UploadFiles = (fields: { name: string; maxCount: number }[], destination?: string) =>
-  FileFieldsInterceptor(fields, createMulterOptions(destination));
+export const UploadContentFiles = (fields: { name: string; maxCount: number }[], destination?: string) =>
+  FileFieldsInterceptor(fields, createMulterOptions(destination, ['pdf', 'mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm']));

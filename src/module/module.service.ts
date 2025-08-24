@@ -4,17 +4,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ModuleResponseDto } from './dto/response/get-modules-response.dto';
 import { GetModulesResponse } from './dto/response/get-modules-response.dto';
 import { ReorderModulesDto } from './dto/reorder-modules.dto';
-import { promises as fs } from 'fs';
 import { CompleteModuleDto } from './dto/response/complete-module.dto';
 import { CreateModuleResponseDto } from './dto/response/create-module-response.dto';
-import path from 'path';
-import { FileService } from 'src/common/file.service';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class ModuleService {
 	constructor(
 		private prisma: PrismaService,
-		private fileService: FileService,
+		private storageService: StorageService,
 	) {}
 
 	async create(
@@ -50,8 +48,8 @@ export class ModuleService {
 			description: module.description,
 			course_id: module.course_id,
 			order: module.order,
-			pdf_content: `${process.env.BACKEND_URL}/uploads/${param.pdf_content}`,
-			video_content: `${process.env.BACKEND_URL}/uploads/${param.video_content}`,
+			pdf_content: this.storageService.getFileUrl(module.pdf_content),
+			video_content: this.storageService.getFileUrl(module.video_content),
 			created_at: module.created_at.toString(),
 			updated_at: module.updated_at.toString(),
 		}
@@ -97,8 +95,8 @@ export class ModuleService {
 				description: module.description,
 				course_id: module.course_id,
 				order: module.order,
-				pdf_content: `${process.env.BACKEND_URL}/uploads/${module.pdf_content}`,
-				video_content: `${process.env.BACKEND_URL}/uploads/${module.video_content}`,
+				pdf_content: this.storageService.getFileUrl(module.pdf_content),
+				video_content: this.storageService.getFileUrl(module.video_content),
 				is_completed: is_admin ? false : module.progress[0]?.is_completed,
 				created_at: module.created_at.toString(),
 				updated_at: module.updated_at.toString(),
@@ -129,8 +127,8 @@ export class ModuleService {
 			description: module.description,
 			order: module.order,
 			course_id: module.course_id,
-			pdf_content: `${process.env.BACKEND_URL}/uploads/${module.pdf_content}`,
-			video_content: `${process.env.BACKEND_URL}/uploads/${module.video_content}`,
+			pdf_content: this.storageService.getFileUrl(module.pdf_content),
+			video_content: this.storageService.getFileUrl(module.video_content),
 			is_completed: module.progress[0]?.is_completed || false,
 			created_at: module.created_at.toString(),
 			updated_at: module.updated_at.toString(),
@@ -161,8 +159,8 @@ export class ModuleService {
 			}),
 		]);
 
-		this.fileService.deleteFile(oldModule?.pdf_content);
-		this.fileService.deleteFile(oldModule?.video_content);
+		if (oldModule?.pdf_content) await this.storageService.deleteFile(oldModule.pdf_content);
+		if (oldModule?.video_content) await this.storageService.deleteFile(oldModule.video_content);
 
 		return {
 			id: updatedModule.id,
@@ -170,8 +168,8 @@ export class ModuleService {
 			description: updatedModule.description,
 			order: updatedModule.order,
 			course_id: updatedModule.course_id,
-			pdf_content: `${process.env.BACKEND_URL}/uploads/${updatedModule.pdf_content}`,
-			video_content: `${process.env.BACKEND_URL}/uploads/${updatedModule.video_content}`,
+			pdf_content: this.storageService.getFileUrl(updatedModule.pdf_content),
+			video_content: this.storageService.getFileUrl(updatedModule.video_content),
 			created_at: updatedModule.created_at.toString(),
 			updated_at: updatedModule.updated_at.toString(),
 		}
@@ -182,9 +180,8 @@ export class ModuleService {
 			where: { id },
 		});
 
-		this.fileService.deleteFile(module.pdf_content);
-		this.fileService.deleteFile(module.video_content);
-		
+		if (module.pdf_content) await this.storageService.deleteFile(module.pdf_content);
+		if (module.video_content) await this.storageService.deleteFile(module.video_content);
 	}
 
 	async reorder(

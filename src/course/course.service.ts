@@ -6,16 +6,13 @@ import { CourseSummary, GetCoursesResponse } from './dto/response/get-courses-re
 import { UpdateCourseRequestDto } from './dto/request/update-course-request.dto';
 import { GetMyCoursesResponseDto } from './dto/response/get-my-courses-response.dto';
 import { BuyCourseResponse } from './dto/response/buy-course-response.dto';
-import * as fs from 'fs/promises';
-import path from 'path';
-import { FileService } from 'src/common/file.service';
-
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class CourseService {
 	constructor(
 		private prisma: PrismaService,
-		private readonly fileService: FileService, // Assuming you have a FileService for handling file operations
+		private readonly storageService: StorageService,
 	) {}
 
 	async create(
@@ -45,7 +42,7 @@ export class CourseService {
 			description: createdCourse.description,
 			instructor: createdCourse.instructor,
 			price: createdCourse.price.toNumber(),
-			thumbnail_image: `${process.env.BACKEND_URL}/uploads/${createdCourse.thumbnail_image}`,
+			thumbnail_image: this.storageService.getFileUrl(createdCourse.thumbnail_image),
 			topics: createdCourse.topics.map(topic => topic.name),
 			created_at: createdCourse.created_at.toString(),
 			updated_at: createdCourse.updated_at.toString(),
@@ -101,7 +98,7 @@ export class CourseService {
 				description: course.description,
 				instructor: course.instructor,
 				price: course.price.toNumber(),
-				thumbnail_image: `${process.env.BACKEND_URL}/uploads/${course.thumbnail_image}`,
+				thumbnail_image: this.storageService.getFileUrl(course.thumbnail_image),
 				topics: course.topics.map(topic => topic.name),
 				created_at: course.created_at.toString(),
 				updated_at: course.updated_at.toString(),
@@ -180,7 +177,7 @@ export class CourseService {
 				description: course.description,
 				instructor: course.instructor,
 				price: course.price.toNumber(),
-				thumbnail_image: `${process.env.BACKEND_URL}/uploads/${course.thumbnail_image}`,
+				thumbnail_image: this.storageService.getFileUrl(course.thumbnail_image),
 				topics: course.topics.map(topic => topic.name),
 				created_at: course.created_at.toString(),
 				updated_at: course.updated_at.toString(),
@@ -213,7 +210,7 @@ export class CourseService {
 			description: course.description,
 			instructor: course.instructor,
 			price: course.price.toNumber(),
-			thumbnail_image: `${process.env.BACKEND_URL}/uploads/${course.thumbnail_image}`,
+			thumbnail_image: this.storageService.getFileUrl(course.thumbnail_image),
 			topics: course.topics.map(topic => topic.name),
 			created_at: course.created_at.toString(),
 			updated_at: course.updated_at.toString(),
@@ -251,7 +248,7 @@ export class CourseService {
 			})
 		]);
 
-		this.fileService.deleteFile(oldCourse?.thumbnail_image);
+		if (oldCourse?.thumbnail_image) await this.storageService.deleteFile(oldCourse.thumbnail_image);
 
 		return {
 			id: updatedCourse.id,
@@ -259,7 +256,7 @@ export class CourseService {
 			description: updatedCourse.description,
 			instructor: updatedCourse.instructor,
 			price: updatedCourse.price.toNumber(),
-			thumbnail_image: `${process.env.BACKEND_URL}/uploads/${updatedCourse.thumbnail_image}`,
+			thumbnail_image: this.storageService.getFileUrl(updatedCourse.thumbnail_image),
 			topics: updatedCourse.topics.map(topic => topic.name),
 			created_at: updatedCourse.created_at.toString(),
 			updated_at: updatedCourse.updated_at.toString(),
@@ -271,7 +268,7 @@ export class CourseService {
 			where: { id },
 		});
 
-		this.fileService.deleteFile(course.thumbnail_image);
+		if (course.thumbnail_image) await this.storageService.deleteFile(course.thumbnail_image);
 	}
 
 	async buyCourse(
