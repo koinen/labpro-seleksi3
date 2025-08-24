@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{{title}}</title>
+        <link rel="stylesheet" href="/css/global.css" />
+        {{#if styles}}
+            {{#each styles}}
+                <link rel="stylesheet" href="{{this}}">
+            {{/each}}
+        {{/if}}
+    </head>
+    <body>
+        {{!-- {{> navbar}} --}}
+        <main>{{{body}}}</main>
+    </body>
+</html>

@@ -13,7 +13,7 @@ import { UploadContentFiles } from 'src/common/decorators/upload-file.decorator'
 
 @UseGuards(AuthGuard)
 @Controller('api/modules')
-export class ModuleController {
+export class ModuleApiController {
 	constructor( private readonly moduleService: ModuleService) {}
 
 	@Get(':id')

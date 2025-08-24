@@ -1,98 +1,71 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Grocademy
+## Seleksi Lab - Labpro
+> Tugas Seleksi Tahap 3
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
+## Cara Menjalankan Aplikasi
+1. Buat file .env yang sesuai dengan contoh .env.example dan isi sesuai environment anda.
+2. Jalankan script ini dengan Docker Engine menyala untuk menjalankan aplikasi di lokal.
 ```bash
-$ npm install
+docker compose up
 ```
 
-## Compile and run the project
+## Design Patterns
+1. Builder Pattern
 
-```bash
-# development
-$ npm run start
+Builder pattern digunakan untuk membentuk response, karena setiap response untuk REST API memerlukan bentuk yang terstruktur, dan terkadang juga terdapat field pagination yang digunakan untuk beberapa jenis response
 
-# watch mode
-$ npm run start:dev
+2. Composite Pattern
 
-# production mode
-$ npm run start:prod
-```
+Composite Pattern digunakan dalam setiap module, dengan adanya pemisahan controller, service, dan data layer (Prisma), dan dibuat dengan mengikuti SRP, untuk memisahkan dan mengecilkan tiap tanggung jawab dari suatu kelas.
 
-## Run tests
+3. Strategy Pattern
 
-```bash
-# unit tests
-$ npm run test
+Strategy Pattern digunakan dalam pembuatan StorageStrategy, dan dibuat dengan mengikuti prinsip OCP dan DIP pada SOLID.
 
-# e2e tests
-$ npm run test:e2e
+## Tech Stack
+- Framework Website: NestJS (TypeScript)
+- Database: MariaDB
+- ORM: Prisma
+- Template Engine: Express Handlebar
 
-# test coverage
-$ npm run test:cov
-```
+## Endpoint
+> REST API - semua
 
-## Deployment
+> Frontend
+1. Login
+2. Register 
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Bonus
+- B02 - Deployment
+- B07 - Dokumentasi API
+- B08 - SOLID
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## B02 - Deployment
+Dapat diakses di: https://labpro-seleksi3-production.up.railway.app
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## B07 - Dokumentasi API
+Menggunakan Swagger, dan dapat diakses di /docs
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## B08 - SOLID
+> **S** - Single Responsibilty Principle
 
-## Resources
+Prinsip ini diterapkan dengan memisahkan tiap-tiap tanggung jawab modul, sebagai AuthModule bertugas untuk menangani segala macam yang berkaitan tentang Authentication, seperti login dan register. Selain itu, tiap-tiap modul juga terdapat pemisahan tanggung jawab dengan adanya controller dan service, dengan controller bertugas sebagai antarmuka untuk request dari client, dan service untuk memroses request tersebut dengan logik yang terpisah, sehingga level controller tidak perlu terlibat dalamnya, hanya menerima hasil jadi dan mengembalikan sebagai response/halaman ke pengguna.
 
-Check out a few resources that may come in handy when working with NestJS:
+> **O** - Open/Closed Principle
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Untuk prinsip ini, penerapannya dapat ditemukan pada penggunaan kelas-kelas abstrak atau interface sehingga dapat dibuat kelas-kelas baru dan apabila salah satu kelas konkrit ingin diganti penggunaannya, tinggal dapat menukar tanpa ada error atau permasalahan. 
 
-## Support
+> **L** - Liskov Substitution Principle
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Prinsip Liskov Substitution diterapkan dengan memastikan bahwa kelas turunan atau implementasi dari suatu interface atau kelas abstrak dapat menggantikan kelas parent tanpa menyebabkan error. Contohnya adalah implementasi StorageStrategy (LocalStorageStrategy, atau strategy Storage lainnya) dapat digunakan oleh StorageService (interchangable) tanpa merusak fungsionalitas
 
-## Stay in touch
+> **I** - Interface Segregation Principle
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Interface Segregation Principle adalah prinsip pemisahan antarmuka dimana tiap-tiap kelas hanya memiliki antarmuka-antarmuka yang diperlukan saja. Penerapan prinsip ini dapat ditemukan pada pemisahan antarmuka DTO (Data Transfer Object), baik request maupun response, untuk setiap route API yang ada.
 
-## License
+> **D** - Dependency Inversion Principle 
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Pada aplikasi ini, inti dari prinsip ini adalah penggunaan dependency injection, namun dependency tersebut adalah sesuatu yang abstrak, sehingga modifikasi tidak terlalu menyebarkan error (code fragility). Penerapannya dapat ditemukan pada penggunaan StorageStrategy pada StorageService.
+
+## Author
+David Bakti Lodianto - 13523083

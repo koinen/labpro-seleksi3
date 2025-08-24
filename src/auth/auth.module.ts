@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthController } from './auth.controller';
+import { AuthApiController } from './auth-api.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { HashService } from 'src/common/hash.service';
+import { AuthPageController } from './auth-page.controller';
 import { AuthGuard } from './auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from 'src/common/common.module';
@@ -21,7 +21,7 @@ import { CommonModule } from 'src/common/common.module';
     CommonModule,
   ],
   providers: [AuthService, AuthGuard, PrismaService],
-  controllers: [AuthController],
+  controllers: [AuthApiController, AuthPageController],
   exports: [AuthGuard, JwtModule, CommonModule],  // export both if other modules need them
 })
 export class AuthModule {}

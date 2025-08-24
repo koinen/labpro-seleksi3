@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Query, UseGuards, Put, ForbiddenException, UploadedFiles, HttpCode, HttpStatus } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseRequestDto } from './dto/request/create-course-request.dto';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { CourseResponseDto } from './dto/response/course-response.dto';
@@ -13,17 +12,16 @@ import { SuccessResponseBuilder } from 'src/common/response/response-builder';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import type { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { BuyCourseResponse } from './dto/response/buy-course-response.dto';
-import { diskStorage } from 'multer';
 import { CreateModuleRequestDto } from 'src/module/dto/request/create-module-request.dto';
 import { ModuleService } from 'src/module/module.service';
 import { CreateModuleResponseDto } from 'src/module/dto/response/create-module-response.dto';
 import { ReorderModulesDto } from 'src/module/dto/reorder-modules.dto';
-import { GetModulesResponse, ModuleResponseDto } from 'src/module/dto/response/get-modules-response.dto';
+import { GetModulesResponse } from 'src/module/dto/response/get-modules-response.dto';
 import { UploadImageFile, UploadContentFiles } from 'src/common/decorators/upload-file.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('api/courses')
-export class CourseController {
+export class CourseApiController {
   	constructor(
 		private readonly courseService: CourseService,
 		private readonly moduleService: ModuleService,

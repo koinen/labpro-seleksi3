@@ -15,7 +15,7 @@ body {
 /* Common container (optional global utility) */
 .container {
   width: 100%;
-  max-width: 960px; /* more flexible for all pages */
+  max-width: 960px;
   margin: 0 auto;
   padding: 20px;
 }

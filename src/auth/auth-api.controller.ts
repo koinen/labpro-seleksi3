@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Request, UseGuards, Res, UseFilters } from '@nestjs/common';
 import { RegisterRequestDto } from './dto/request/register-request.dto';
 import { LoginRequestDto } from './dto/request/login-request.dto';
 import { AuthService } from './auth.service';
@@ -9,9 +9,11 @@ import { createSwaggerResponse } from 'src/common/response/swagger-response-fact
 import { LoginResponseDto } from './dto/response/login-response.dto';
 import { SuccessResponseBuilder } from 'src/common/response/response-builder';
 import { UserSummary } from 'src/user/dto/response/get-users-response.dto';
+import type { Response } from 'express';
+import { UnauthorizedFilter } from 'src/common/filters/unauthorized-exception.filter';
 
 @Controller('api/auth')
-export class AuthController {
+export class AuthApiController {
     constructor(private readonly authService: AuthService) {}
 
     @Post('login')
@@ -25,12 +27,23 @@ export class AuthController {
     }
 
     @Post('user-login')
-    @ApiOperation({ summary: 'Login for user' })
+    @ApiOperation({ summary: 'Login user' })
     @ApiOkResponse({ type: createSwaggerResponse(LoginResponseDto), description: 'User logged in successfully' })
-    async userLogin(@Body() loginDto: LoginRequestDto) {
-        const user = await this.authService.login(loginDto);
+    async userLogin(
+        @Body() loginDto: LoginRequestDto,
+        @Res() res: Response
+    ) {
+        const {username, token, is_admin} = await this.authService.login(loginDto);
+        
+        res.cookie('auth_token', token, {
+            httpOnly: true,     // cannot be accessed by JavaScript
+            secure: process.env.NODE_ENV === 'production', // only over HTTPS in prod
+            sameSite: 'strict', // CSRF protection
+            maxAge: 60 * 60 * 1000 // 1 hour
+        });
+
         return new SuccessResponseBuilder()
-            .setData(user)
+            .setData({username, token, is_admin})
             .build();
     }
 
@@ -46,12 +59,12 @@ export class AuthController {
     }
 
     @Post('register')
-    @ApiOkResponse({ type: createSwaggerResponse(LoginResponseDto), description: 'Admin registered successfully' })
-    @ApiOperation({ summary: 'Register a new admin' })
+    @ApiOkResponse({ type: createSwaggerResponse(LoginResponseDto), description: 'User registered successfully' })
+    @ApiOperation({ summary: 'Register a new user' })
     async register(@Body() registerDto: RegisterRequestDto) {
-        const admin = this.authService.register(registerDto);
+        const user = this.authService.register(registerDto);
         return new SuccessResponseBuilder()
-            .setData(admin)
+            .setData(user)
             .build();
     }
 }

@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="courses-header">
+        <h1>Courses</h1>
+        <p class="courses-subtitle">Expand your skills with our curated courses!</p>
+    </div>
+    
+    {{#if courses.length}}
+        <div class="courses-grid">
+        {{#each courses}}
+            {{> course-card course=this}}
+        {{/each}}
+        </div>
+    {{else}}
+        <div class="courses-empty">
+            <p>No courses available at the moment.</p>
+        </div>
+    {{/if}}
+</div>

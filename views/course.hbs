@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="course-header">
+        <div class="course-hero">
+            <div>
+                <h1 class="course-hero-title">{{course.title}}</h1>
+                <p class="course-hero-description">{{course.description}}</p>
+            </div>
+            <div class="course-hero-image">
+                {{#if course.image}}
+                    <img src="{{course.image}}" alt="{{course.title}}">
+                {{else}}
+                   <div class="course-image-placeholder">{{course.title}}</div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+
+    <div class="course-main">
+        <div class="course-sidebar">
+            <div class="enrollment-card">
+                <div class="enrollment-price">
+                    <span class="price-current">${{course.price}}</span>
+                </div>
+
+                {{#if course.isEnrolled}}
+                    <div>
+                        <p class="enrolled-text">✓ You're enrolled in this course</p>
+                        <a href="/courses/{{course.id}}/learn" class="course-btn primary">Continue Learning</a>
+                        <div class="progress-info">
+                            <span class="progress-text">Progress: {{course.progress}}%</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{course.progress}}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                {{else}}
+                    <form action="/courses/{{course.id}}/buy" method="POST">
+                        <button type="submit" class="course-btn primary">Enroll Now</button>
+                    </form>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

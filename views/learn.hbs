@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="learn-header">        
+        <div class="learn-title">
+            <h1>{{course.title}}</h1>
+            <div class="learn-progress">
+                <span class="progress-text">{{completedModules}}/{{totalModules}} modules completed</span>
+                <div class="progress-bar">
+                <div class="progress-fill" style="width: {{overallProgress}}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modules-list">
+        {{#each course.modules}}
+        <a href="module/{{this.id}}">
+            <div class="module-item">
+                <h3>{{this.title}}</h3>
+                <p>{{this.description}}</p>
+            </div>
+        </a>
+        {{/each}}
+    </div>
+</div>
